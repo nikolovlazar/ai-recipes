@@ -1,6 +1,6 @@
 # AI Recipes
 
-A monorepo containing the backend, web app, and mobile app (React Native) for the AI Recipes application.
+A monorepo containing the web app, and mobile app (React Native) for the AI Recipes application.
 
 ## Overview
 
