@@ -369,17 +369,17 @@ export interface Nutriments {
   energy_value?: number;
   energy_100g?: number;
   energy_serving?: number;
-  'energy-kcal'?: number;
-  'energy-kcal_unit'?: string;
-  'energy-kcal_value'?: number;
-  'energy-kcal_value_computed'?: number;
-  'energy-kcal_100g'?: number;
-  'energy-kcal_serving'?: number;
-  'energy-kj'?: number;
-  'energy-kj_unit'?: string;
-  'energy-kj_value'?: number;
-  'energy-kj_100g'?: number;
-  'energy-kj_serving'?: number;
+  "energy-kcal"?: number;
+  "energy-kcal_unit"?: string;
+  "energy-kcal_value"?: number;
+  "energy-kcal_value_computed"?: number;
+  "energy-kcal_100g"?: number;
+  "energy-kcal_serving"?: number;
+  "energy-kj"?: number;
+  "energy-kj_unit"?: string;
+  "energy-kj_value"?: number;
+  "energy-kj_100g"?: number;
+  "energy-kj_serving"?: number;
 
   // Macronutrients
   proteins?: number;
@@ -406,11 +406,11 @@ export interface Nutriments {
   fat_100g?: number;
   fat_serving?: number;
 
-  'saturated-fat'?: number;
-  'saturated-fat_unit'?: string;
-  'saturated-fat_value'?: number;
-  'saturated-fat_100g'?: number;
-  'saturated-fat_serving'?: number;
+  "saturated-fat"?: number;
+  "saturated-fat_unit"?: string;
+  "saturated-fat_value"?: number;
+  "saturated-fat_100g"?: number;
+  "saturated-fat_serving"?: number;
 
   fiber?: number;
   fiber_unit?: string;
@@ -439,65 +439,65 @@ export interface Nutriments {
   cholesterol_serving?: number;
 
   // Fruits/vegetables estimates
-  'fruits-vegetables-nuts-estimate-from-ingredients'?: number;
-  'fruits-vegetables-nuts-estimate-from-ingredients_100g'?: number;
-  'fruits-vegetables-nuts-estimate-from-ingredients_serving'?: number;
-  'fruits-vegetables-legumes-estimate'?: number;
-  'fruits-vegetables-legumes-estimate_unit'?: string;
-  'fruits-vegetables-legumes-estimate_value'?: number;
-  'fruits-vegetables-legumes-estimate_100g'?: number;
-  'fruits-vegetables-legumes-estimate_serving'?: number;
-  'fruits-vegetables-legumes-estimate-from-ingredients'?: number;
-  'fruits-vegetables-legumes-estimate-from-ingredients_100g'?: number;
-  'fruits-vegetables-legumes-estimate-from-ingredients_serving'?: number;
-  'fruits-vegetables-legumes-estimate_label'?: string;
+  "fruits-vegetables-nuts-estimate-from-ingredients"?: number;
+  "fruits-vegetables-nuts-estimate-from-ingredients_100g"?: number;
+  "fruits-vegetables-nuts-estimate-from-ingredients_serving"?: number;
+  "fruits-vegetables-legumes-estimate"?: number;
+  "fruits-vegetables-legumes-estimate_unit"?: string;
+  "fruits-vegetables-legumes-estimate_value"?: number;
+  "fruits-vegetables-legumes-estimate_100g"?: number;
+  "fruits-vegetables-legumes-estimate_serving"?: number;
+  "fruits-vegetables-legumes-estimate-from-ingredients"?: number;
+  "fruits-vegetables-legumes-estimate-from-ingredients_100g"?: number;
+  "fruits-vegetables-legumes-estimate-from-ingredients_serving"?: number;
+  "fruits-vegetables-legumes-estimate_label"?: string;
 
   // NOVA group
-  'nova-group'?: number;
-  'nova-group_100g'?: number;
-  'nova-group_serving'?: number;
+  "nova-group"?: number;
+  "nova-group_100g"?: number;
+  "nova-group_serving"?: number;
 
   // Vitamins
-  'vitamin-a'?: number;
-  'vitamin-a_unit'?: string;
-  'vitamin-a_value'?: number;
-  'vitamin-a_100g'?: number;
-  'vitamin-b1'?: number;
-  'vitamin-b1_unit'?: string;
-  'vitamin-b1_value'?: number;
-  'vitamin-b1_100g'?: number;
-  'vitamin-b2'?: number;
-  'vitamin-b2_unit'?: string;
-  'vitamin-b2_value'?: number;
-  'vitamin-b2_100g'?: number;
-  'vitamin-b6'?: number;
-  'vitamin-b6_unit'?: string;
-  'vitamin-b6_value'?: number;
-  'vitamin-b6_100g'?: number;
-  'vitamin-b9'?: number;
-  'vitamin-b9_unit'?: string;
-  'vitamin-b9_value'?: number;
-  'vitamin-b9_100g'?: number;
-  'vitamin-b12'?: number;
-  'vitamin-b12_unit'?: string;
-  'vitamin-b12_value'?: number;
-  'vitamin-b12_100g'?: number;
-  'vitamin-c'?: number;
-  'vitamin-c_unit'?: string;
-  'vitamin-c_value'?: number;
-  'vitamin-c_100g'?: number;
-  'vitamin-d'?: number;
-  'vitamin-d_unit'?: string;
-  'vitamin-d_value'?: number;
-  'vitamin-d_100g'?: number;
-  'vitamin-e'?: number;
-  'vitamin-e_unit'?: string;
-  'vitamin-e_value'?: number;
-  'vitamin-e_100g'?: number;
-  'vitamin-pp'?: number;
-  'vitamin-pp_unit'?: string;
-  'vitamin-pp_value'?: number;
-  'vitamin-pp_100g'?: number;
+  "vitamin-a"?: number;
+  "vitamin-a_unit"?: string;
+  "vitamin-a_value"?: number;
+  "vitamin-a_100g"?: number;
+  "vitamin-b1"?: number;
+  "vitamin-b1_unit"?: string;
+  "vitamin-b1_value"?: number;
+  "vitamin-b1_100g"?: number;
+  "vitamin-b2"?: number;
+  "vitamin-b2_unit"?: string;
+  "vitamin-b2_value"?: number;
+  "vitamin-b2_100g"?: number;
+  "vitamin-b6"?: number;
+  "vitamin-b6_unit"?: string;
+  "vitamin-b6_value"?: number;
+  "vitamin-b6_100g"?: number;
+  "vitamin-b9"?: number;
+  "vitamin-b9_unit"?: string;
+  "vitamin-b9_value"?: number;
+  "vitamin-b9_100g"?: number;
+  "vitamin-b12"?: number;
+  "vitamin-b12_unit"?: string;
+  "vitamin-b12_value"?: number;
+  "vitamin-b12_100g"?: number;
+  "vitamin-c"?: number;
+  "vitamin-c_unit"?: string;
+  "vitamin-c_value"?: number;
+  "vitamin-c_100g"?: number;
+  "vitamin-d"?: number;
+  "vitamin-d_unit"?: string;
+  "vitamin-d_value"?: number;
+  "vitamin-d_100g"?: number;
+  "vitamin-e"?: number;
+  "vitamin-e_unit"?: string;
+  "vitamin-e_value"?: number;
+  "vitamin-e_100g"?: number;
+  "vitamin-pp"?: number;
+  "vitamin-pp_unit"?: string;
+  "vitamin-pp_value"?: number;
+  "vitamin-pp_100g"?: number;
 
   // Minerals
   calcium?: number;
@@ -553,14 +553,14 @@ export interface Nutriments {
   cocoa_100g?: number;
   cocoa_serving?: number;
   cocoa_label?: string;
-  'beta-carotene'?: number;
-  'beta-carotene_unit'?: string;
-  'beta-carotene_value'?: number;
-  'beta-carotene_100g'?: number;
-  'pantothenic-acid'?: number;
-  'pantothenic-acid_unit'?: string;
-  'pantothenic-acid_value'?: number;
-  'pantothenic-acid_100g'?: number;
+  "beta-carotene"?: number;
+  "beta-carotene_unit"?: string;
+  "beta-carotene_value"?: number;
+  "beta-carotene_100g"?: number;
+  "pantothenic-acid"?: number;
+  "pantothenic-acid_unit"?: string;
+  "pantothenic-acid_value"?: number;
+  "pantothenic-acid_100g"?: number;
   phylloquinone?: number;
   phylloquinone_unit?: string;
   phylloquinone_value?: number;
@@ -607,18 +607,18 @@ export interface Nutriments {
   water_100g?: number;
 
   // Nutrition score
-  'nutrition-score-fr'?: number;
-  'nutrition-score-fr_100g'?: number;
+  "nutrition-score-fr"?: number;
+  "nutrition-score-fr_100g"?: number;
 
   // Can have many more dynamic fields
   [key: string]: any;
 }
 
 export interface NutrientLevels {
-  fat?: 'low' | 'moderate' | 'high';
-  'saturated-fat'?: 'low' | 'moderate' | 'high';
-  sugars?: 'low' | 'moderate' | 'high';
-  salt?: 'low' | 'moderate' | 'high';
+  fat?: "low" | "moderate" | "high";
+  "saturated-fat"?: "low" | "moderate" | "high";
+  sugars?: "low" | "moderate" | "high";
+  salt?: "low" | "moderate" | "high";
 }
 
 // ============================================================================
@@ -626,8 +626,8 @@ export interface NutrientLevels {
 // ============================================================================
 
 export interface NutriScore {
-  '2021'?: NutriScoreVersion;
-  '2023'?: NutriScoreVersion;
+  "2021"?: NutriScoreVersion;
+  "2023"?: NutriScoreVersion;
 }
 
 export interface NutriScoreVersion {
@@ -647,7 +647,7 @@ export interface NutriScoreVersionData {
   sugars?: number;
   sugars_value?: number;
   sugars_points?: number;
-  'saturated_fat'?: number;
+  saturated_fat?: number;
   saturated_fat_value?: number;
   saturated_fat_points?: number;
   saturated_fat_ratio?: number;
@@ -860,9 +860,9 @@ export interface ProductImage {
   uploader?: string;
   uploaded_t?: number | string;
   sizes?: {
-    '100'?: ImageSize;
-    '200'?: ImageSize;
-    '400'?: ImageSize;
+    "100"?: ImageSize;
+    "200"?: ImageSize;
+    "400"?: ImageSize;
     full?: ImageSize;
   };
 }
