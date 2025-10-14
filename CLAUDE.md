@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Overview
 
 AI Recipes is a monorepo containing:
-- **Backend**: Hono server with OpenAI integration
+- **Backend**: Express server with OpenAI integration
 - **Mobile app**: React Native application
 - **Frontend**: React + Vite (future consideration, not in current scope)
 
@@ -26,8 +26,8 @@ packages/
 
 ## Architecture
 
-### Backend (Hono)
-- **Framework**: Hono (lightweight Node.js web framework)
+### Backend (Express)
+- **Framework**: Express (Node.js web framework)
 - **Database**: SQLite for local caching
 - **AI Integration**: OpenAI via AI SDK (server-side only for security)
 - **Product Data**: openfoodfacts-js SDK
@@ -93,7 +93,7 @@ packages/
 
 ## Technology Stack
 
-- **Backend**: Hono, SQLite, OpenAI (via AI SDK), openfoodfacts-js
+- **Backend**: Express, SQLite, OpenAI (via AI SDK), openfoodfacts-js
 - **Mobile**: React Native, NativeWind
 - **Shared**: TypeScript, Zod (validation), pnpm workspaces
 - **Monorepo**: Turborepo
