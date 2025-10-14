@@ -91,6 +91,70 @@ packages/
    - Cache invalidates weekly to get updated product data
    - Reduces API calls and prevents rate limiting
 
+## Backend Architecture Principles
+
+The backend follows **Clean Architecture** principles for maintainability and testability:
+
+### Layer Structure
+
+```
+src/
+├── routes/          # HTTP layer - thin controllers
+├── use-cases/       # Business logic - pure TypeScript functions
+├── repositories/    # Data access layer
+└── types/           # Domain models and DTOs
+```
+
+### Key Rules
+
+1. **Routes** - Only handle HTTP concerns (parsing requests, sending responses)
+   - Parse request body/params
+   - Call use cases
+   - Format HTTP responses
+   - Handle HTTP errors
+   - NO business logic here
+
+2. **Use Cases** - Pure business logic functions
+   - Accept repositories as dependencies (dependency injection)
+   - Contain all business rules and validation
+   - Return domain objects or throw domain errors
+   - NO framework imports (no Express, no Drizzle, no external SDKs)
+   - Easily testable without mocks
+
+3. **Repositories** - Data access layer
+   - `profile.repository.ts` - Local SQLite database operations (uses Drizzle)
+   - `products.repository.ts` - Open Food Facts SDK + local cache layer
+   - All external data sources abstracted here
+   - Return domain objects, not raw database records
+
+4. **Types** - Domain models and DTOs
+   - DTOs for request/response data
+   - Domain models for business logic
+   - Clear contracts between layers
+
+### Dependency Rule
+
+- Routes depend on Use Cases and Repositories
+- Use Cases depend on Repositories (via interfaces/types)
+- Repositories depend on external libraries (Drizzle, SDKs)
+- **Inner layers never import outer layers**
+
+### Example Flow
+
+```
+HTTP Request → Route → Use Case → Repository → Database/API
+   (Express)     ↓        ↓           ↓
+              Parse    Business    Data Access
+                       Logic
+```
+
+### Benefits
+
+- **Testability**: Use cases are pure functions, easy to unit test
+- **Maintainability**: Clear separation of concerns
+- **Flexibility**: Can swap implementations (e.g., change database)
+- **Reusability**: Business logic can be used from different interfaces
+
 ## Technology Stack
 
 - **Backend**: Express, SQLite, OpenAI (via AI SDK), openfoodfacts-js
@@ -119,10 +183,86 @@ pnpm check-types      # Type check all apps
 pnpm lint             # Lint all apps
 ```
 
+## API Endpoints
+
+### Profile Management
+- `GET /api/profile` - Get the current user profile
+- `POST /api/profile` - Create user profile (onboarding)
+- `PUT /api/profile` - Update user profile
+- `DELETE /api/profile` - Delete user profile
+
+**Profile Schema:**
+```typescript
+{
+  diet?: string;              // e.g., "vegan", "vegetarian", "keto", "paleo"
+  allergies?: string[];       // e.g., ["nuts", "dairy", "gluten"]
+  restrictions?: string[];    // e.g., ["low-sodium", "low-sugar"]
+  age?: number;
+  weight?: number;            // in kg
+  goals?: string;             // e.g., "lose weight", "build muscle", "maintain health"
+}
+```
+
+### Product Search
+- `GET /api/products/search?q={query}` - Search for products by name
+  - Returns list of products from Open Food Facts
+  - Results are cached in SQLite for future requests
+
+### Product Analysis
+- `POST /api/products/{barcode}/analyze` - Analyze a product for the current user
+  - Sends product details + user profile to OpenAI
+  - Streams AI response in real-time (SSE/streaming response)
+  - AI checks if product is safe for user consumption
+  - If unsafe or unhealthy, generates healthier homemade recipe alternative with full instructions
+
+**Analysis Response Format:**
+```typescript
+{
+  isSafe: boolean;
+  issues?: string[];          // e.g., ["Contains nuts", "High in sugar"]
+  recommendation: string;     // AI-generated analysis
+  recipe?: {
+    name: string;
+    ingredients: string[];
+    instructions: string[];
+  }
+}
+```
+
+## Database Schema
+
+### Users Table (Single Tenant)
+```sql
+CREATE TABLE user (
+  id INTEGER PRIMARY KEY,
+  diet TEXT,
+  allergies TEXT,           -- JSON array
+  restrictions TEXT,        -- JSON array
+  age INTEGER,
+  weight REAL,
+  goals TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+### Products Cache Table
+```sql
+CREATE TABLE products (
+  barcode TEXT PRIMARY KEY,
+  name TEXT,
+  data TEXT,               -- Full JSON data from Open Food Facts
+  cached_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
+
 ## Important Notes
 
+- **Single Tenant**: Database stores data for only one user
 - **Local Development**: Everything runs locally (backend + mobile)
 - **No Authentication**: Keep it simple for demo purposes
 - **No PII Collection**: User profiles are anonymous
 - **API Keys**: Keep OpenAI key server-side only (backend)
+- **Streaming**: Product analysis streams AI response in real-time
+- **Cache Invalidation**: Products cached for 7 days, then refetched from Open Food Facts
 - **Open Food Facts Attribution**: Required in mobile app About screen
