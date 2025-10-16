@@ -5,11 +5,8 @@
  * Pure function - no framework dependencies.
  */
 
-import type {
-  IProfileRepository,
-  UpdateProfileDto,
-  ProfileResponse,
-} from "../types/profile.types.js";
+import type { ProfileDto, ProfileResponse } from "@ai-recipes/shared";
+import type { IProfileRepository } from "../types/profile.types.js";
 
 /**
  * Update an existing user profile
@@ -25,7 +22,7 @@ import type {
  */
 export async function updateProfileUseCase(
   profileRepository: IProfileRepository,
-  data: UpdateProfileDto
+  data: ProfileDto
 ): Promise<ProfileResponse> {
   // Check if profile exists
   const existingProfile = await profileRepository.findProfile();

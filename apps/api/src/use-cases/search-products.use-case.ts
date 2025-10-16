@@ -5,10 +5,10 @@
  * Pure function - no framework dependencies.
  */
 
+import type { SearchProductsResponse } from "@ai-recipes/shared";
 import type {
   IProductsRepository,
   SearchProductsDto,
-  SearchProductsResponse,
 } from "../types/product.types.js";
 
 /**

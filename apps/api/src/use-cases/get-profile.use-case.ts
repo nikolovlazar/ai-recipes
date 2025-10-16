@@ -5,10 +5,8 @@
  * Pure function - no framework dependencies.
  */
 
-import type {
-  IProfileRepository,
-  ProfileResponse,
-} from "../types/profile.types.js";
+import type { ProfileResponse } from "@ai-recipes/shared";
+import type { IProfileRepository } from "../types/profile.types.js";
 
 /**
  * Get the user profile (single tenant)

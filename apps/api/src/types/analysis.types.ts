@@ -1,41 +1,23 @@
 /**
- * Analysis Domain Types
+ * Analysis Domain Types (Backend Internal)
  *
- * Types for product analysis feature that combines:
- * - User profile data
- * - Product details
- * - AI-generated analysis and recommendations
+ * This file contains backend-specific types for product analysis.
+ * API contract types are imported from @ai-recipes/shared.
  */
 
-import type { ProfileResponse } from "./profile.types.js";
-import type { ProductDetails } from "./product.types.js";
+import type {
+  AnalysisResponse,
+  ProfileResponse,
+  ProductDetails,
+} from "@ai-recipes/shared";
 
 /**
- * Analysis request context
+ * Analysis request context (internal use)
  * Contains all data needed for AI analysis
  */
 export interface AnalysisContext {
   profile: ProfileResponse;
   product: ProductDetails;
-}
-
-/**
- * Recipe recommendation
- */
-export interface Recipe {
-  name: string;
-  ingredients: string[];
-  instructions: string[];
-}
-
-/**
- * Analysis result from AI
- */
-export interface AnalysisResponse {
-  isSafe: boolean;
-  issues?: string[];
-  recommendation: string;
-  recipe?: Recipe;
 }
 
 /**

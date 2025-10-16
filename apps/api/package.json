@@ -11,6 +11,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@ai-recipes/shared": "workspace:*",
     "@libsql/client": "^0.15.15",
     "@openfoodfacts/openfoodfacts-nodejs": "2.0.0-alpha.19",
     "cors": "^2.8.5",

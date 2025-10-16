@@ -5,11 +5,8 @@
  * Pure function - no framework dependencies.
  */
 
-import type {
-  IProfileRepository,
-  CreateProfileDto,
-  ProfileResponse,
-} from "../types/profile.types.js";
+import type { ProfileDto, ProfileResponse } from "@ai-recipes/shared";
+import type { IProfileRepository } from "../types/profile.types.js";
 
 /**
  * Create a new user profile
@@ -25,7 +22,7 @@ import type {
  */
 export async function createProfileUseCase(
   profileRepository: IProfileRepository,
-  data: CreateProfileDto
+  data: ProfileDto
 ): Promise<ProfileResponse> {
   // Check if profile already exists (single tenant)
   const existingProfile = await profileRepository.findProfile();

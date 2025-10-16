@@ -14,11 +14,13 @@ import { OpenFoodFacts, SearchApi } from "@openfoodfacts/openfoodfacts-nodejs";
 import { eq } from "drizzle-orm";
 import { db, productsTable } from "../db/index.js";
 import type {
-  IProductsRepository,
-  SearchProductsDto,
+  ProductSearchResult,
   SearchProductsResponse,
   ProductDetails,
-  ProductSearchResult,
+} from "@ai-recipes/shared";
+import type {
+  IProductsRepository,
+  SearchProductsDto,
 } from "../types/product.types.js";
 
 export class ProductsRepository implements IProductsRepository {

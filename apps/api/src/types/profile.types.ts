@@ -1,49 +1,11 @@
 /**
- * Profile Domain Types and DTOs
+ * Profile Domain Types (Backend Internal)
  *
- * These types define the contract between layers:
- * - DTOs for API requests/responses
- * - Domain models for business logic
+ * This file contains backend-specific types for profile management.
+ * API contract types are imported from @ai-recipes/shared.
  */
 
-/**
- * DTO for creating a new profile (onboarding)
- */
-export interface CreateProfileDto {
-  diet?: string;
-  allergies?: string[];
-  restrictions?: string[];
-  age?: number;
-  weight?: number;
-  goals?: string;
-}
-
-/**
- * DTO for updating an existing profile
- */
-export interface UpdateProfileDto {
-  diet?: string;
-  allergies?: string[];
-  restrictions?: string[];
-  age?: number;
-  weight?: number;
-  goals?: string;
-}
-
-/**
- * Profile response (what the API returns)
- */
-export interface ProfileResponse {
-  id: number;
-  diet?: string | null;
-  allergies?: string[] | null;
-  restrictions?: string[] | null;
-  age?: number | null;
-  weight?: number | null;
-  goals?: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import type { ProfileDto, ProfileResponse } from "@ai-recipes/shared";
 
 /**
  * Repository interface for profile data access
@@ -51,7 +13,7 @@ export interface ProfileResponse {
  */
 export interface IProfileRepository {
   findProfile(): Promise<ProfileResponse | null>;
-  createProfile(data: CreateProfileDto): Promise<ProfileResponse>;
-  updateProfile(id: number, data: UpdateProfileDto): Promise<ProfileResponse>;
+  createProfile(data: ProfileDto): Promise<ProfileResponse>;
+  updateProfile(id: number, data: ProfileDto): Promise<ProfileResponse>;
   deleteProfile(id: number): Promise<void>;
 }

@@ -11,7 +11,7 @@ import { getProfileUseCase } from "../use-cases/get-profile.use-case.js";
 import { createProfileUseCase } from "../use-cases/create-profile.use-case.js";
 import { updateProfileUseCase } from "../use-cases/update-profile.use-case.js";
 import { deleteProfileUseCase } from "../use-cases/delete-profile.use-case.js";
-import type { CreateProfileDto, UpdateProfileDto } from "../types/profile.types.js";
+import type { ProfileDto } from "@ai-recipes/shared";
 
 const router = Router();
 
@@ -42,7 +42,7 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
  */
 router.post("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const data: CreateProfileDto = req.body;
+    const data: ProfileDto = req.body;
 
     const profile = await createProfileUseCase(profileRepository, data);
 
@@ -63,7 +63,7 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
  */
 router.put("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const data: UpdateProfileDto = req.body;
+    const data: ProfileDto = req.body;
 
     const profile = await updateProfileUseCase(profileRepository, data);
 

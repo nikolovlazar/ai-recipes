@@ -7,12 +7,8 @@
 
 import { eq } from "drizzle-orm";
 import { db, userTable } from "../db/index.js";
-import type {
-  CreateProfileDto,
-  UpdateProfileDto,
-  ProfileResponse,
-  IProfileRepository,
-} from "../types/profile.types.js";
+import type { ProfileDto, ProfileResponse } from "@ai-recipes/shared";
+import type { IProfileRepository } from "../types/profile.types.js";
 
 export class ProfileRepository implements IProfileRepository {
   /**
@@ -31,7 +27,7 @@ export class ProfileRepository implements IProfileRepository {
   /**
    * Create a new user profile
    */
-  async createProfile(data: CreateProfileDto): Promise<ProfileResponse> {
+  async createProfile(data: ProfileDto): Promise<ProfileResponse> {
     const [profile] = await db
       .insert(userTable)
       .values({
@@ -54,7 +50,7 @@ export class ProfileRepository implements IProfileRepository {
    */
   async updateProfile(
     id: number,
-    data: UpdateProfileDto
+    data: ProfileDto
   ): Promise<ProfileResponse> {
     const [profile] = await db
       .update(userTable)
@@ -88,14 +84,14 @@ export class ProfileRepository implements IProfileRepository {
   private mapToResponse(profile: typeof userTable.$inferSelect): ProfileResponse {
     return {
       id: profile.id,
-      diet: profile.diet,
-      allergies: profile.allergies ? JSON.parse(profile.allergies) : null,
+      diet: profile.diet ?? undefined,
+      allergies: profile.allergies ? JSON.parse(profile.allergies) : undefined,
       restrictions: profile.restrictions
         ? JSON.parse(profile.restrictions)
-        : null,
-      age: profile.age,
-      weight: profile.weight,
-      goals: profile.goals,
+        : undefined,
+      age: profile.age ?? undefined,
+      weight: profile.weight ?? undefined,
+      goals: profile.goals ?? undefined,
       createdAt: profile.createdAt,
       updatedAt: profile.updatedAt,
     };

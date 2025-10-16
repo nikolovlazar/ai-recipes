@@ -5,10 +5,8 @@
  * Pure function - no framework dependencies.
  */
 
-import type {
-  IProductsRepository,
-  ProductDetails,
-} from "../types/product.types.js";
+import type { ProductDetails } from "@ai-recipes/shared";
+import type { IProductsRepository } from "../types/product.types.js";
 
 /**
  * Get product details by barcode
