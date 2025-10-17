@@ -1,6 +1,5 @@
 import { API_CONFIG } from "./config";
 import type { AnalysisResponse } from "@ai-recipes/shared";
-import { createParser } from "eventsource-parser";
 
 interface AnalysisCallbacks {
   onChunk: (chunk: string) => void;
@@ -23,33 +22,47 @@ export function analyzeProduct(
   const xhr = new XMLHttpRequest();
   let fullText = "";
   let lastProcessedIndex = 0;
+  let buffer = "";
 
-  // Create SSE parser
-  const parser = createParser({
-    onEvent: (event) => {
-      const data = event.data;
+  // Manual SSE parser
+  const parseSSE = (data: string) => {
+    buffer += data;
 
-      // Check for end signal
-      if (data === "[DONE]") {
-        callbacks.onComplete({
-          isSafe: false, // Will be determined by AI response
-          recommendation: fullText,
-        });
-        return;
-      }
+    // Split by double newlines (SSE event separator)
+    const events = buffer.split("\n\n");
+    buffer = events.pop() || ""; // Keep incomplete event in buffer
 
-      // Parse JSON chunk
-      try {
-        const parsed = JSON.parse(data);
-        if (parsed.chunk) {
-          fullText += parsed.chunk;
-          callbacks.onChunk(parsed.chunk);
+    for (const event of events) {
+      if (!event.trim()) continue;
+
+      const lines = event.split("\n");
+      for (const line of lines) {
+        if (line.startsWith("data: ")) {
+          const eventData = line.substring(6); // Remove "data: " prefix
+
+          // Check for end signal
+          if (eventData === "[DONE]") {
+            callbacks.onComplete({
+              isSafe: false, // Will be determined by AI response
+              recommendation: fullText,
+            });
+            return;
+          }
+
+          // Parse JSON chunk
+          try {
+            const parsed = JSON.parse(eventData);
+            if (parsed.chunk) {
+              fullText += parsed.chunk;
+              callbacks.onChunk(parsed.chunk);
+            }
+          } catch (error) {
+            // Ignore parse errors
+          }
         }
-      } catch (error) {
-        // Ignore parse errors
       }
-    },
-  });
+    }
+  };
 
   xhr.open("GET", url, true);
 
@@ -66,7 +79,7 @@ export function analyzeProduct(
 
       if (newData) {
         lastProcessedIndex = currentLength;
-        parser.feed(newData);
+        parseSSE(newData);
       }
     }
   };
@@ -76,9 +89,9 @@ export function analyzeProduct(
     const newData = xhr.responseText.substring(lastProcessedIndex);
     lastProcessedIndex = xhr.responseText.length;
 
-    // Feed to parser
+    // Parse SSE
     if (newData) {
-      parser.feed(newData);
+      parseSSE(newData);
     }
   };
 
@@ -87,7 +100,7 @@ export function analyzeProduct(
       // Process any remaining data
       const remainingData = xhr.responseText.substring(lastProcessedIndex);
       if (remainingData) {
-        parser.feed(remainingData);
+        parseSSE(remainingData);
       }
 
       // If no [DONE] signal was received, complete anyway
