@@ -12,8 +12,10 @@
   },
   "dependencies": {
     "@ai-recipes/shared": "workspace:*",
+    "@ai-sdk/anthropic": "^2.0.32",
     "@libsql/client": "^0.15.15",
     "@openfoodfacts/openfoodfacts-nodejs": "2.0.0-alpha.19",
+    "ai": "^5.0.76",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
     "drizzle-orm": "^0.44.6",

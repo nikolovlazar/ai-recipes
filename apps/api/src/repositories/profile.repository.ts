@@ -55,14 +55,16 @@ export class ProfileRepository implements IProfileRepository {
     const [profile] = await db
       .update(userTable)
       .set({
-        diet: data.diet,
-        allergies: data.allergies ? JSON.stringify(data.allergies) : undefined,
-        restrictions: data.restrictions
+        diet: data.diet ?? null,
+        allergies: data.allergies?.length
+          ? JSON.stringify(data.allergies)
+          : null,
+        restrictions: data.restrictions?.length
           ? JSON.stringify(data.restrictions)
-          : undefined,
-        age: data.age,
-        weight: data.weight,
-        goals: data.goals,
+          : null,
+        age: data.age ?? null,
+        weight: data.weight ?? null,
+        goals: data.goals ?? null,
       })
       .where(eq(userTable.id, id))
       .returning();

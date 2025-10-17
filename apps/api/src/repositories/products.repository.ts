@@ -47,6 +47,8 @@ export class ProductsRepository implements IProductsRepository {
         langs: ["en"],
         page: dto.page || 1,
         page_size: 20,
+        // Note: SearchAPI may not support fields parameter
+        // It returns a predefined set of fields
       });
 
       if (error || !data) {
@@ -65,6 +67,7 @@ export class ProductsRepository implements IProductsRepository {
           brands: product.brands,
           image_url: product.image_url || product.image_front_url,
           nutriscore_grade: product.nutriscore_grade,
+          countries_tags: product.countries_tags,
         }),
       );
 

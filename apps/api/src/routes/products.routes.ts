@@ -10,11 +10,11 @@ import { ProductsRepository } from "../repositories/products.repository.js";
 import { ProfileRepository } from "../repositories/profile.repository.js";
 import { searchProductsUseCase } from "../use-cases/search-products.use-case.js";
 import { getProductUseCase } from "../use-cases/get-product.use-case.js";
+import { gatherAnalysisContextUseCase } from "../use-cases/gather-analysis-context.use-case.js";
 import { analyzeProductUseCase } from "../use-cases/analyze-product.use-case.js";
 
 const router = Router();
 
-// Initialize repositories (dependency injection)
 const productsRepository = new ProductsRepository();
 const profileRepository = new ProfileRepository();
 
@@ -84,66 +84,61 @@ router.get(
 
 /**
  * POST /api/products/:barcode/analyze
- * Analyze a product against user profile (AI integration pending)
+ * Analyze a product against user profile using AI (streaming)
  */
 router.get(
   "/:barcode/analyze",
   async (req: Request, res: Response, next: NextFunction) => {
+    const abortController = new AbortController();
+
+    req.on("close", () => {
+      abortController.abort();
+    });
+
     try {
       const { barcode } = req.params;
 
-      // Gather data for analysis
-      const context = await analyzeProductUseCase(
+      const context = await gatherAnalysisContextUseCase(
         profileRepository,
         productsRepository,
         barcode,
       );
 
-      // Prepare optimized data for LLM (minimize tokens)
-      const userProfile = {
-        diet: context.profile.diet,
-        allergies: context.profile.allergies,
-        restrictions: context.profile.restrictions,
-        age: context.profile.age,
-        weight: context.profile.weight,
-        goals: context.profile.goals,
-      };
+      const result = await analyzeProductUseCase(
+        context,
+        abortController.signal,
+      );
 
-      const productForLLM = {
-        name: context.product.name,
-        brands: context.product.brands,
-        allergens: context.product.allergens_tags?.map(tag => tag.replace('en:', '')) || [],
-        nutriscore: context.product.nutriscore_grade,
-        nova_group: context.product.nova_group,
-        nutrient_levels: context.product.nutrient_levels,
-        nutrition_per_100g: {
-          energy_kcal: context.product.nutriments?.["energy-kcal_100g"],
-          fat: context.product.nutriments?.fat_100g,
-          saturated_fat: context.product.nutriments?.["saturated-fat_100g"],
-          carbs: context.product.nutriments?.carbohydrates_100g,
-          sugars: context.product.nutriments?.sugars_100g,
-          protein: context.product.nutriments?.proteins_100g,
-          salt: context.product.nutriments?.salt_100g,
-          fiber: context.product.nutriments?.fiber_100g,
-        },
-        ingredients: context.product.ingredients?.map(ing => ({
-          name: ing.id?.replace('en:', '') || ing.text,
-          percent: ing.percent || ing.percent_estimate,
-          vegan: ing.vegan,
-          vegetarian: ing.vegetarian,
-        })) || [],
-      };
+      res.setHeader("Content-Type", "text/event-stream");
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("Connection", "keep-alive");
+      res.setHeader("X-Accel-Buffering", "no"); // Disable nginx buffering
+      res.flushHeaders(); // Send headers immediately
 
-      // TODO: Send to OpenAI for analysis
-      // For now, return the formatted data
-      res.json({
-        message: "Data prepared for LLM. AI analysis not yet implemented.",
-        llm_input: {
-          user_profile: userProfile,
-          product: productForLLM,
-        },
-      });
+      const stream = result.textStream;
+
+      for await (const chunk of stream) {
+        if (abortController.signal.aborted) {
+          break;
+        }
+
+        const data = `data: ${JSON.stringify({ chunk })}\n\n`;
+        res.write(data);
+
+        if (typeof (res as any).flush === "function") {
+          (res as any).flush();
+        }
+      }
+
+      if (!abortController.signal.aborted) {
+        res.write("data: [DONE]\n\n");
+        res.end();
+      }
     } catch (error) {
+      if (abortController.signal.aborted) {
+        return;
+      }
+
       if (error instanceof Error) {
         if (error.message.includes("Profile not found")) {
           return res.status(400).json({
@@ -153,6 +148,11 @@ router.get(
         if (error.message.includes("Product not found")) {
           return res.status(404).json({
             error: { message: error.message },
+          });
+        }
+        if (error.message.includes("ANTHROPIC_API_KEY")) {
+          return res.status(500).json({
+            error: { message: "AI service is not configured properly" },
           });
         }
       }

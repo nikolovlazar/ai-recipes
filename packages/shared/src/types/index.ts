@@ -48,6 +48,7 @@ export interface ProductSearchResult {
   brands?: string[];
   image_url?: string;
   nutriscore_grade?: string;
+  countries_tags?: string[]; // Country codes (e.g., ["en:united-states", "en:canada"])
 }
 
 export interface SearchProductsResponse {
