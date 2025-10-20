@@ -33,3 +33,6 @@ local.db-wal
 # misc
 .DS_Store
 .vercel
+
+# Sentry Config File
+.sentryclirc

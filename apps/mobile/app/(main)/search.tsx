@@ -8,7 +8,7 @@ import {
   Keyboard,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import type { ProductSearchResult } from "@ai-recipes/shared";
 import { searchProducts } from "@/api/products";
 import { ProductCard } from "@/components/products/product-card";
@@ -27,9 +27,7 @@ export default function SearchScreen() {
   const [hasMore, setHasMore] = useState(true);
 
   // Debounced search
-  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(
-    null
-  );
+  const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
 
   const handleSearch = async (searchQuery: string, pageNum: number = 1) => {
     if (searchQuery.trim().length < 2) {
@@ -185,7 +183,9 @@ export default function SearchScreen() {
       )}
 
       {/* Error State */}
-      {error && <ErrorState error={error} onRetry={() => handleSearch(query, 1)} />}
+      {error && (
+        <ErrorState error={error} onRetry={() => handleSearch(query, 1)} />
+      )}
 
       {/* Results List */}
       {!error && (
