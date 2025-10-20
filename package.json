@@ -21,7 +21,11 @@
   "pnpm": {
     "ignoredBuiltDependencies": [
       "@tailwindcss/oxide",
-      "esbuild"
+      "esbuild",
+      "unrs-resolver"
+    ],
+    "onlyBuiltDependencies": [
+      "unrs-resolver"
     ]
   }
 }
