@@ -9,12 +9,13 @@
     "lint": "expo lint"
   },
   "dependencies": {
-    "@ai-recipes/shared": "workspace:*",
+    "@ai-recipes/shared": "file:../../packages/shared",
     "@expo/vector-icons": "^15.0.2",
     "@react-native-picker/picker": "2.11.1",
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",
+    "@sentry/react-native": "^7.4.0",
     "expo": "~54.0.13",
     "expo-clipboard": "~7.0.0",
     "expo-constants": "~18.0.9",

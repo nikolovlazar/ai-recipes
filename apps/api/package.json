@@ -3,18 +3,22 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
+    "build": "tsc && pnpm sentry:sourcemaps",
     "start": "node dist/index.js",
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org nikolovlazar --project ai-recipes-api ./dist && sentry-cli sourcemaps upload --org nikolovlazar --project ai-recipes-api ./dist"
   },
   "dependencies": {
-    "@ai-recipes/shared": "workspace:*",
+    "@ai-recipes/shared": "file:../../packages/shared",
     "@ai-sdk/anthropic": "^2.0.32",
     "@libsql/client": "^0.15.15",
     "@openfoodfacts/openfoodfacts-nodejs": "2.0.0-alpha.19",
+    "@sentry/cli": "^2.56.1",
+    "@sentry/node": "^10.20.0",
+    "@sentry/profiling-node": "^10.20.0",
     "ai": "^5.0.76",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
