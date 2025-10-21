@@ -3,10 +3,12 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "dev": "expo start --ios",
+    "dev": "expo run:ios",
     "start": "expo start --ios",
     "reset-project": "node ./scripts/reset-project.js",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "android": "expo run:android",
+    "ios": "expo run:ios"
   },
   "dependencies": {
     "@ai-recipes/shared": "file:../../packages/shared",
@@ -15,11 +17,12 @@
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",
-    "babel-preset-expo": "^54.0.4",
     "@sentry/react-native": "^7.4.0",
+    "babel-preset-expo": "^54.0.4",
     "expo": "~54.0.13",
     "expo-clipboard": "~7.0.0",
     "expo-constants": "~18.0.9",
+    "expo-dev-client": "~6.0.15",
     "expo-font": "~14.0.9",
     "expo-haptics": "~15.0.7",
     "expo-image": "~3.0.9",
