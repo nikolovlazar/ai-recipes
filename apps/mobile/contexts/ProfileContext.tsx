@@ -32,17 +32,21 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const loadProfile = async () => {
+    console.log('[Profile] Loading profile...');
     try {
       setLoading(true);
       setError(null);
 
       const data = await profileAPI.getProfile();
+      console.log('[Profile] Profile loaded successfully');
       setProfile(data);
     } catch (err: any) {
       // Profile not found is expected for first-time users
       if (err.status === 404) {
+        console.log('[Profile] No profile found (first-time user)');
         setProfile(null);
       } else {
+        console.error('[Profile] Failed to load profile:', err.message);
         setError(err.message);
       }
     } finally {
@@ -51,13 +55,16 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   };
 
   const createProfile = async (data: ProfileDto) => {
+    console.log('[Profile] Creating new profile...');
     try {
       setLoading(true);
       setError(null);
 
       const newProfile = await profileAPI.createProfile(data);
+      console.log('[Profile] Profile created successfully');
       setProfile(newProfile);
     } catch (err: any) {
+      console.error('[Profile] Failed to create profile:', err.message);
       setError(err.message);
       throw err;
     } finally {
@@ -66,13 +73,16 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   };
 
   const updateProfile = async (data: Partial<ProfileDto>) => {
+    console.log('[Profile] Updating profile...');
     try {
       setLoading(true);
       setError(null);
 
       const updatedProfile = await profileAPI.updateProfile(data);
+      console.log('[Profile] Profile updated successfully');
       setProfile(updatedProfile);
     } catch (err: any) {
+      console.error('[Profile] Failed to update profile:', err.message);
       setError(err.message);
       throw err;
     } finally {
@@ -81,13 +91,16 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   };
 
   const deleteProfile = async () => {
+    console.log('[Profile] Deleting profile...');
     try {
       setLoading(true);
       setError(null);
 
       await profileAPI.deleteProfile();
+      console.log('[Profile] Profile deleted successfully');
       setProfile(null);
     } catch (err: any) {
+      console.error('[Profile] Failed to delete profile:', err.message);
       setError(err.message);
       throw err;
     } finally {

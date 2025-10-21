@@ -43,14 +43,12 @@ export default function AnalysisScreen() {
   }, [barcode]);
 
   useEffect(() => {
-    // Auto-trigger analysis after product loads
     if (product && !analyzing && !analysis && !analysisError) {
       startAnalysis();
     }
   }, [product]);
 
   useEffect(() => {
-    // Cleanup: abort analysis when component unmounts
     return () => {
       if (abortAnalysisRef.current) {
         abortAnalysisRef.current();
@@ -59,14 +57,19 @@ export default function AnalysisScreen() {
   }, []);
 
   const loadProductDetails = async () => {
+    console.log(`[Analysis] Loading product details for barcode: ${barcode}`);
     try {
       setLoading(true);
       setError(null);
 
       const productData = await getProduct(barcode as string);
+      console.log(`[Analysis] Product loaded: ${productData.name}`);
       setProduct(productData);
     } catch (err: any) {
-      console.error("Failed to load product:", err);
+      console.error(
+        `[Analysis] Failed to load product ${barcode}:`,
+        err.message,
+      );
       setError(err.message || "Failed to load product details");
     } finally {
       setLoading(false);
@@ -74,14 +77,18 @@ export default function AnalysisScreen() {
   };
 
   const startAnalysis = async () => {
+    console.log(`[Analysis] Starting AI analysis for barcode: ${barcode}`);
     setAnalyzing(true);
     setAnalysisError(null);
     setStreamedContent("");
     setAnalysis(null);
 
+    let chunkCount = 0;
+
     // Store abort function for cleanup
     const abort = analyzeProduct(barcode as string, {
       onChunk: (chunk) => {
+        chunkCount++;
         setStreamedContent((prev) => prev + chunk);
 
         // Auto-scroll as content arrives
@@ -90,6 +97,9 @@ export default function AnalysisScreen() {
         }, 50);
       },
       onComplete: (result) => {
+        console.log(
+          `[Analysis] AI analysis complete (${chunkCount} chunks received)`,
+        );
         setAnalysis(result);
         setAnalyzing(false);
         abortAnalysisRef.current = null;
@@ -100,7 +110,7 @@ export default function AnalysisScreen() {
         }, 100);
       },
       onError: (err) => {
-        console.error("Analysis error:", err);
+        console.error(`[Analysis] AI analysis failed:`, err.message);
         setAnalysisError(err.message || "Analysis failed");
         setAnalyzing(false);
         abortAnalysisRef.current = null;
@@ -131,9 +141,7 @@ export default function AnalysisScreen() {
   }
 
   if (error) {
-    return (
-      <ErrorState error={error} onRetry={loadProductDetails} />
-    );
+    return <ErrorState error={error} onRetry={loadProductDetails} />;
   }
 
   if (!product) {
@@ -210,7 +218,7 @@ export default function AnalysisScreen() {
                   .replace(/-/g, " ")
                   .split(" ")
                   .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                  .join(" ")
+                  .join(" "),
               )
               .join(", ")}
           </Text>

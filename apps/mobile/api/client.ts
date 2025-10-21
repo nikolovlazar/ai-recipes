@@ -59,19 +59,30 @@ export class APIClient {
     config: RequestConfig = {}
   ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
+    const method = config.method || 'GET';
+
+    console.log(`[API] ${method} ${endpoint}`);
 
     try {
+      const startTime = Date.now();
       const response = await this.fetchWithTimeout(url, config);
+      const duration = Date.now() - startTime;
 
       // Handle HTTP errors
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+        console.error(
+          `[API] ${method} ${endpoint} - ${response.status} (${duration}ms)`,
+          errorData.error?.message || 'Request failed'
+        );
         throw new HttpError(
           errorData.error?.message || "Request failed",
           response.status,
           errorData
         );
       }
+
+      console.log(`[API] ${method} ${endpoint} - ${response.status} (${duration}ms)`);
 
       // Handle 204 No Content
       if (response.status === 204) {
@@ -92,6 +103,7 @@ export class APIClient {
       }
 
       // Network errors
+      console.error(`[API] ${method} ${endpoint} - Network error`, error);
       throw new HttpError(
         "Network error. Check your internet connection.",
         0
