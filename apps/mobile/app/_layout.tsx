@@ -3,6 +3,7 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { isRunningInExpoGo } from "expo";
 import { Stack, useNavigationContainerRef } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -12,9 +13,6 @@ import "../global.css";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { ProfileProvider } from "@/contexts/ProfileContext";
 import * as Sentry from "@sentry/react-native";
-import Constants from "expo-constants";
-
-const isRunningInExpoGo = Constants.appOwnership === "expo";
 
 const navigationIntegration = Sentry.reactNavigationIntegration({
   enableTimeToInitialDisplay: !isRunningInExpoGo,
@@ -23,6 +21,7 @@ const navigationIntegration = Sentry.reactNavigationIntegration({
 Sentry.init({
   dsn: "https://fa3818be6142876a5b37540e8e55f3d7@o4506044970565632.ingest.us.sentry.io/4510222714077184",
 
+  enableUserInteractionTracing: true,
   tracesSampleRate: 1.0, // Capture 100% of transactions for development
   enableNativeFramesTracking: !isRunningInExpoGo, // Track slow/frozen frames
 
@@ -30,7 +29,7 @@ Sentry.init({
 
   enableLogs: true,
 
-  replaysSessionSampleRate: 0.1,
+  replaysSessionSampleRate: 1,
   replaysOnErrorSampleRate: 1,
 
   profilesSampleRate: 1.0,
@@ -41,6 +40,8 @@ Sentry.init({
     Sentry.feedbackIntegration(),
     Sentry.consoleLoggingIntegration({ levels: ["log", "warn", "error"] }),
   ],
+
+  debug: true,
 
   // uncomment the line below to enable Spotlight (https://spotlightjs.com)
   // spotlight: __DEV__,
