@@ -7,6 +7,7 @@
 
 import type { ProductDetails } from "@ai-recipes/shared";
 import type { IProductsRepository } from "../types/product.types.js";
+import * as Sentry from "@sentry/node";
 
 /**
  * Get product details by barcode
@@ -22,20 +23,28 @@ import type { IProductsRepository } from "../types/product.types.js";
  */
 export async function getProductUseCase(
   productsRepository: IProductsRepository,
-  barcode: string
+  barcode: string,
 ): Promise<ProductDetails | null> {
-  // Validate barcode
-  const cleanBarcode = barcode?.trim();
+  return await Sentry.startSpan(
+    {
+      op: "function",
+      name: "Get Product Details",
+      attributes: {
+        "product.barcode": barcode?.trim(),
+      },
+    },
+    async () => {
+      const cleanBarcode = barcode?.trim();
 
-  if (!cleanBarcode || cleanBarcode.length === 0) {
-    throw new Error("Barcode cannot be empty");
-  }
+      if (!cleanBarcode || cleanBarcode.length === 0) {
+        throw new Error("Barcode cannot be empty");
+      }
 
-  // Basic barcode format validation (alphanumeric)
-  if (!/^[a-zA-Z0-9]+$/.test(cleanBarcode)) {
-    throw new Error("Invalid barcode format");
-  }
+      if (!/^[a-zA-Z0-9]+$/.test(cleanBarcode)) {
+        throw new Error("Invalid barcode format");
+      }
 
-  // Delegate to repository
-  return await productsRepository.getProductByBarcode(cleanBarcode);
+      return await productsRepository.getProductByBarcode(cleanBarcode);
+    },
+  );
 }

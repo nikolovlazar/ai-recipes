@@ -8,6 +8,7 @@
 import type { IProfileRepository } from "../types/profile.types.js";
 import type { IProductsRepository } from "../types/product.types.js";
 import type { AnalysisContext } from "../types/analysis.types.js";
+import * as Sentry from "@sentry/node";
 
 /**
  * Gather data for product analysis
@@ -28,22 +29,33 @@ export async function gatherAnalysisContextUseCase(
   productsRepository: IProductsRepository,
   barcode: string,
 ): Promise<AnalysisContext> {
-  const profile = await profileRepository.findProfile();
+  return await Sentry.startSpan(
+    {
+      op: "function",
+      name: "Gather Analysis Context",
+      attributes: {
+        "product.barcode": barcode,
+      },
+    },
+    async () => {
+      const profile = await profileRepository.findProfile();
 
-  if (!profile) {
-    throw new Error(
-      "Profile not found. Please complete onboarding before analyzing products.",
-    );
-  }
+      if (!profile) {
+        throw new Error(
+          "Profile not found. Please complete onboarding before analyzing products.",
+        );
+      }
 
-  const product = await productsRepository.getProductByBarcode(barcode);
+      const product = await productsRepository.getProductByBarcode(barcode);
 
-  if (!product) {
-    throw new Error("Product not found");
-  }
+      if (!product) {
+        throw new Error("Product not found");
+      }
 
-  return {
-    profile,
-    product,
-  };
+      return {
+        profile,
+        product,
+      };
+    },
+  );
 }

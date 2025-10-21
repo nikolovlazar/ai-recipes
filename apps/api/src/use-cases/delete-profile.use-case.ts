@@ -6,6 +6,7 @@
  */
 
 import type { IProfileRepository } from "../types/profile.types.js";
+import * as Sentry from "@sentry/node";
 
 /**
  * Delete the user profile
@@ -17,15 +18,21 @@ import type { IProfileRepository } from "../types/profile.types.js";
  * @throws Error if profile doesn't exist
  */
 export async function deleteProfileUseCase(
-  profileRepository: IProfileRepository
+  profileRepository: IProfileRepository,
 ): Promise<void> {
-  // Check if profile exists
-  const existingProfile = await profileRepository.findProfile();
+  await Sentry.startSpan(
+    {
+      op: "function",
+      name: "Delete User Profile",
+    },
+    async () => {
+      const existingProfile = await profileRepository.findProfile();
 
-  if (!existingProfile) {
-    throw new Error("Profile not found. Nothing to delete.");
-  }
+      if (!existingProfile) {
+        throw new Error("Profile not found. Nothing to delete.");
+      }
 
-  // Delete the profile
-  await profileRepository.deleteProfile(existingProfile.id);
+      await profileRepository.deleteProfile(existingProfile.id);
+    },
+  );
 }

@@ -7,6 +7,7 @@
 
 import type { ProfileDto, ProfileResponse } from "@ai-recipes/shared";
 import type { IProfileRepository } from "../types/profile.types.js";
+import * as Sentry from "@sentry/node";
 
 /**
  * Create a new user profile
@@ -22,15 +23,26 @@ import type { IProfileRepository } from "../types/profile.types.js";
  */
 export async function createProfileUseCase(
   profileRepository: IProfileRepository,
-  data: ProfileDto
+  data: ProfileDto,
 ): Promise<ProfileResponse> {
-  // Check if profile already exists (single tenant)
-  const existingProfile = await profileRepository.findProfile();
+  return await Sentry.startSpan(
+    {
+      op: "function",
+      name: "Create User Profile",
+      attributes: {
+        "profile.has_diet": !!data.diet,
+        "profile.allergies_count": data.allergies?.length || 0,
+        "profile.restrictions_count": data.restrictions?.length || 0,
+      },
+    },
+    async () => {
+      const existingProfile = await profileRepository.findProfile();
 
-  if (existingProfile) {
-    throw new Error("Profile already exists. Use PUT to update.");
-  }
+      if (existingProfile) {
+        throw new Error("Profile already exists. Use PUT to update.");
+      }
 
-  // Create the profile
-  return await profileRepository.createProfile(data);
+      return await profileRepository.createProfile(data);
+    },
+  );
 }

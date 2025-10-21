@@ -9,26 +9,37 @@ import { eq } from "drizzle-orm";
 import { db, userTable } from "../db/index.js";
 import type { ProfileDto, ProfileResponse } from "@ai-recipes/shared";
 import type { IProfileRepository } from "../types/profile.types.js";
+import * as Sentry from "@sentry/node";
 
 export class ProfileRepository implements IProfileRepository {
-  /**
-   * Find the user profile (single tenant - returns first row)
-   */
   async findProfile(): Promise<ProfileResponse | null> {
-    const [profile] = await db.select().from(userTable).limit(1);
+    const query = db.select().from(userTable).limit(1);
 
-    if (!profile) {
-      return null;
-    }
+    return await Sentry.startSpan(
+      {
+        name: query.toSQL().sql,
+        op: "db.query",
+        attributes: {
+          "db.system": "sqlite",
+        },
+      },
+      async (span) => {
+        const [profile] = await query;
 
-    return this.mapToResponse(profile);
+        if (!profile) {
+          span.setAttribute("profile.found", false);
+          return null;
+        }
+
+        span.setAttribute("profile.found", true);
+        span.setAttribute("profile.id", profile.id);
+        return this.mapToResponse(profile);
+      },
+    );
   }
 
-  /**
-   * Create a new user profile
-   */
   async createProfile(data: ProfileDto): Promise<ProfileResponse> {
-    const [profile] = await db
+    const query = db
       .insert(userTable)
       .values({
         diet: data.diet,
@@ -42,17 +53,28 @@ export class ProfileRepository implements IProfileRepository {
       })
       .returning();
 
-    return this.mapToResponse(profile);
+    return await Sentry.startSpan(
+      {
+        name: query.toSQL().sql,
+        op: "db.query",
+        attributes: {
+          "db.system": "sqlite",
+          "profile.has_diet": !!data.diet,
+          "profile.allergies_count": data.allergies?.length || 0,
+          "profile.restrictions_count": data.restrictions?.length || 0,
+        },
+      },
+      async (span) => {
+        const [profile] = await query;
+
+        span.setAttribute("profile.id", profile.id);
+        return this.mapToResponse(profile);
+      },
+    );
   }
 
-  /**
-   * Update an existing user profile
-   */
-  async updateProfile(
-    id: number,
-    data: ProfileDto
-  ): Promise<ProfileResponse> {
-    const [profile] = await db
+  async updateProfile(id: number, data: ProfileDto): Promise<ProfileResponse> {
+    const query = db
       .update(userTable)
       .set({
         diet: data.diet ?? null,
@@ -69,21 +91,46 @@ export class ProfileRepository implements IProfileRepository {
       .where(eq(userTable.id, id))
       .returning();
 
-    return this.mapToResponse(profile);
+    return await Sentry.startSpan(
+      {
+        name: query.toSQL().sql,
+        op: "db.query",
+        attributes: {
+          "db.system": "sqlite",
+          "profile.id": id,
+          "profile.has_diet": !!data.diet,
+          "profile.allergies_count": data.allergies?.length || 0,
+          "profile.restrictions_count": data.restrictions?.length || 0,
+        },
+      },
+      async () => {
+        const [profile] = await query;
+        return this.mapToResponse(profile);
+      },
+    );
   }
 
-  /**
-   * Delete a user profile
-   */
   async deleteProfile(id: number): Promise<void> {
-    await db.delete(userTable).where(eq(userTable.id, id));
+    const query = db.delete(userTable).where(eq(userTable.id, id));
+
+    await Sentry.startSpan(
+      {
+        name: query.toSQL().sql,
+        op: "db.query",
+        attributes: {
+          "db.system": "sqlite",
+          "profile.id": id,
+        },
+      },
+      async () => {
+        await query;
+      },
+    );
   }
 
-  /**
-   * Map database record to ProfileResponse
-   * Handles JSON parsing for arrays
-   */
-  private mapToResponse(profile: typeof userTable.$inferSelect): ProfileResponse {
+  private mapToResponse(
+    profile: typeof userTable.$inferSelect,
+  ): ProfileResponse {
     return {
       id: profile.id,
       diet: profile.diet ?? undefined,

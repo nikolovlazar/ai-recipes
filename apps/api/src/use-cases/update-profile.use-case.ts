@@ -7,6 +7,7 @@
 
 import type { ProfileDto, ProfileResponse } from "@ai-recipes/shared";
 import type { IProfileRepository } from "../types/profile.types.js";
+import * as Sentry from "@sentry/node";
 
 /**
  * Update an existing user profile
@@ -22,15 +23,28 @@ import type { IProfileRepository } from "../types/profile.types.js";
  */
 export async function updateProfileUseCase(
   profileRepository: IProfileRepository,
-  data: ProfileDto
+  data: ProfileDto,
 ): Promise<ProfileResponse> {
-  // Check if profile exists
-  const existingProfile = await profileRepository.findProfile();
+  return await Sentry.startSpan(
+    {
+      op: "function",
+      name: "Update User Profile",
+      attributes: {
+        "profile.has_diet": !!data.diet,
+        "profile.allergies_count": data.allergies?.length || 0,
+        "profile.restrictions_count": data.restrictions?.length || 0,
+      },
+    },
+    async () => {
+      const existingProfile = await profileRepository.findProfile();
 
-  if (!existingProfile) {
-    throw new Error("Profile not found. Use POST to create a profile first.");
-  }
+      if (!existingProfile) {
+        throw new Error(
+          "Profile not found. Use POST to create a profile first.",
+        );
+      }
 
-  // Update the profile
-  return await profileRepository.updateProfile(existingProfile.id, data);
+      return await profileRepository.updateProfile(existingProfile.id, data);
+    },
+  );
 }

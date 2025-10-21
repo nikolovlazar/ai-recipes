@@ -10,6 +10,7 @@ import type {
   IProductsRepository,
   SearchProductsDto,
 } from "../types/product.types.js";
+import * as Sentry from "@sentry/node";
 
 /**
  * Search for products by text query
@@ -26,21 +27,30 @@ import type {
  */
 export async function searchProductsUseCase(
   productsRepository: IProductsRepository,
-  dto: SearchProductsDto
+  dto: SearchProductsDto,
 ): Promise<SearchProductsResponse> {
-  // Validate query
-  const query = dto.query?.trim();
+  return await Sentry.startSpan(
+    {
+      op: "function",
+      name: "Search Products",
+      attributes: {
+        "search.query": dto.query?.trim(),
+        "search.page": dto.page || 1,
+      },
+    },
+    async () => {
+      const query = dto.query?.trim();
 
-  if (!query || query.length === 0) {
-    throw new Error("Search query cannot be empty");
-  }
+      if (!query || query.length === 0) {
+        throw new Error("Search query cannot be empty");
+      }
 
-  // Validate page number
-  const page = dto.page && dto.page > 0 ? dto.page : 1;
+      const page = dto.page && dto.page > 0 ? dto.page : 1;
 
-  // Delegate to repository
-  return await productsRepository.searchProducts({
-    query,
-    page,
-  });
+      return await productsRepository.searchProducts({
+        query,
+        page,
+      });
+    },
+  );
 }

@@ -12,16 +12,16 @@ import { createProfileUseCase } from "../use-cases/create-profile.use-case.js";
 import { updateProfileUseCase } from "../use-cases/update-profile.use-case.js";
 import { deleteProfileUseCase } from "../use-cases/delete-profile.use-case.js";
 import type { ProfileDto } from "@ai-recipes/shared";
+import * as Sentry from "@sentry/node";
 
 const router = Router();
 
-// Initialize repository (dependency injection)
 const profileRepository = new ProfileRepository();
 
 /**
  * GET /api/profile - Get user profile
  */
-router.get("/", async (req: Request, res: Response, next: NextFunction) => {
+router.get("/", async (_: Request, res: Response, next: NextFunction) => {
   try {
     const profile = await getProfileUseCase(profileRepository);
 
@@ -33,6 +33,7 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
 
     res.json(profile);
   } catch (error) {
+    Sentry.captureException(error);
     next(error);
   }
 });
@@ -48,12 +49,13 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
 
     res.status(201).json(profile);
   } catch (error) {
-    // Handle business rule violations
     if (error instanceof Error && error.message.includes("already exists")) {
       return res.status(409).json({
         error: { message: error.message },
       });
     }
+
+    Sentry.captureException(error);
     next(error);
   }
 });
@@ -75,6 +77,8 @@ router.put("/", async (req: Request, res: Response, next: NextFunction) => {
         error: { message: error.message },
       });
     }
+
+    Sentry.captureException(error);
     next(error);
   }
 });
@@ -88,12 +92,13 @@ router.delete("/", async (req: Request, res: Response, next: NextFunction) => {
 
     res.status(204).send();
   } catch (error) {
-    // Handle business rule violations
     if (error instanceof Error && error.message.includes("not found")) {
       return res.status(404).json({
         error: { message: error.message },
       });
     }
+
+    Sentry.captureException(error);
     next(error);
   }
 });

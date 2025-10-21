@@ -4,7 +4,16 @@ import { nodeProfilingIntegration } from "@sentry/profiling-node";
 
 Sentry.init({
   dsn: "https://318684509fc00ad6162995f32b783b4c@o4506044970565632.ingest.us.sentry.io/4510222810284032",
-  integrations: [nodeProfilingIntegration()],
+  integrations: [
+    nodeProfilingIntegration(),
+    Sentry.vercelAIIntegration({
+      recordInputs: true,
+      recordOutputs: true,
+    }),
+    Sentry.consoleLoggingIntegration({
+      levels: ["log", "info", "debug", "warn", "error"],
+    }),
+  ],
 
   // Send structured logs to Sentry
   enableLogs: true,

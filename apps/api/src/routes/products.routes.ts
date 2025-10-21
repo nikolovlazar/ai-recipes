@@ -12,6 +12,7 @@ import { searchProductsUseCase } from "../use-cases/search-products.use-case.js"
 import { getProductUseCase } from "../use-cases/get-product.use-case.js";
 import { gatherAnalysisContextUseCase } from "../use-cases/gather-analysis-context.use-case.js";
 import { analyzeProductUseCase } from "../use-cases/analyze-product.use-case.js";
+import * as Sentry from "@sentry/node";
 
 const router = Router();
 
@@ -47,6 +48,8 @@ router.get(
           error: { message: error.message },
         });
       }
+
+      Sentry.captureException(error);
       next(error);
     }
   },
@@ -77,6 +80,8 @@ router.get(
           error: { message: error.message },
         });
       }
+
+      Sentry.captureException(error);
       next(error);
     }
   },
@@ -151,11 +156,17 @@ router.get(
           });
         }
         if (error.message.includes("ANTHROPIC_API_KEY")) {
+          Sentry.captureException(error, {
+            level: "error",
+            tags: { error_type: "configuration" },
+          });
           return res.status(500).json({
             error: { message: "AI service is not configured properly" },
           });
         }
       }
+
+      Sentry.captureException(error);
       next(error);
     }
   },
