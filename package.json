@@ -7,7 +7,9 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "check-types": "turbo run check-types",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "android": "expo run:android",
+    "ios": "expo run:ios"
   },
   "devDependencies": {
     "prettier": "^3.6.2",
@@ -27,5 +29,10 @@
     "onlyBuiltDependencies": [
       "unrs-resolver"
     ]
+  },
+  "dependencies": {
+    "expo": "~54.0.19",
+    "react": "19.1.0",
+    "react-native": "0.81.5"
   }
 }

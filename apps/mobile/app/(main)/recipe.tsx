@@ -1,20 +1,9 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  Alert,
-  Share,
-  Platform,
-} from "react-native";
+import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import * as Clipboard from "expo-clipboard";
 import type { Recipe } from "@ai-recipes/shared";
 import { IngredientsList } from "@/components/recipe/ingredients-list";
 import { InstructionsList } from "@/components/recipe/instructions-list";
-import { formatRecipeAsText } from "@/utils/recipe-formatter";
 
 export default function RecipeScreen() {
   const router = useRouter();
@@ -31,85 +20,14 @@ export default function RecipeScreen() {
     console.error("Failed to parse recipe:", error);
   }
 
-  // Mock recipe for testing (will be removed once analysis is implemented)
-  if (!recipe) {
-    recipe = {
-      name: "Homemade Vegan Chocolate Spread",
-      ingredients: [
-        "200g hazelnuts or sunflower seeds",
-        "3 tbsp cocoa powder",
-        "2 tbsp maple syrup",
-        "2 tbsp coconut oil",
-        "1 tsp vanilla extract",
-        "Pinch of salt",
-      ],
-      instructions: [
-        "Roast hazelnuts at 350°F (175°C) for 10-12 minutes until fragrant",
-        "Let cool, then remove skins by rubbing in a towel",
-        "Blend hazelnuts in a food processor until smooth and buttery (10-15 minutes)",
-        "Add cocoa powder, maple syrup, coconut oil, vanilla, and salt",
-        "Blend until completely smooth",
-        "Store in an airtight container at room temperature for up to 2 weeks",
-      ],
-    };
-  }
-
   const [checkedIngredients, setCheckedIngredients] = useState<boolean[]>(
-    new Array(recipe.ingredients.length).fill(false)
+    new Array(recipe!.ingredients.length).fill(false),
   );
 
   const handleToggleIngredient = (index: number) => {
     const newChecked = [...checkedIngredients];
     newChecked[index] = !newChecked[index];
     setCheckedIngredients(newChecked);
-  };
-
-  const handleCopyText = async () => {
-    try {
-      const recipeText = formatRecipeAsText(recipe!);
-      await Clipboard.setStringAsync(recipeText);
-
-      Alert.alert("Copied!", "Recipe copied to clipboard", [{ text: "OK" }]);
-    } catch (error) {
-      Alert.alert("Error", "Failed to copy recipe. Please try again.", [
-        { text: "OK" },
-      ]);
-    }
-  };
-
-  const handleShare = async () => {
-    try {
-      const recipeText = formatRecipeAsText(recipe!);
-
-      const result = await Share.share({
-        message: recipeText,
-        title: recipe!.name,
-      });
-
-      if (result.action === Share.sharedAction) {
-        console.log("Recipe shared successfully");
-      }
-    } catch (error) {
-      Alert.alert("Error", "Failed to share recipe. Please try again.", [
-        { text: "OK" },
-      ]);
-    }
-  };
-
-  const handleExportToNotes = async () => {
-    if (Platform.OS === "ios") {
-      // On iOS, use share sheet which includes Notes
-      await handleShare();
-    } else {
-      // On Android, copy to clipboard and show instructions
-      await Clipboard.setStringAsync(formatRecipeAsText(recipe!));
-
-      Alert.alert(
-        "Recipe Copied",
-        "The recipe has been copied to your clipboard. Paste it in your notes app.",
-        [{ text: "OK" }]
-      );
-    }
   };
 
   if (!recipe) {
@@ -151,40 +69,6 @@ export default function RecipeScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Instructions</Text>
         <InstructionsList instructions={recipe.instructions} />
-      </View>
-
-      {/* Export Actions */}
-      <View style={styles.actionsContainer}>
-        <Pressable
-          style={styles.primaryButton}
-          onPress={handleExportToNotes}
-          accessibilityRole="button"
-          accessibilityLabel="Export recipe to Notes"
-        >
-          <Text style={styles.primaryButtonText}>
-            {Platform.OS === "ios" ? "Export to Notes" : "Copy Recipe"}
-          </Text>
-        </Pressable>
-
-        <View style={styles.secondaryActions}>
-          <Pressable
-            style={styles.secondaryButton}
-            onPress={handleCopyText}
-            accessibilityRole="button"
-            accessibilityLabel="Copy recipe as text"
-          >
-            <Text style={styles.secondaryButtonText}>Copy as Text</Text>
-          </Pressable>
-
-          <Pressable
-            style={styles.secondaryButton}
-            onPress={handleShare}
-            accessibilityRole="button"
-            accessibilityLabel="Share recipe"
-          >
-            <Text style={styles.secondaryButtonText}>Share</Text>
-          </Pressable>
-        </View>
       </View>
 
       <View style={styles.footer} />

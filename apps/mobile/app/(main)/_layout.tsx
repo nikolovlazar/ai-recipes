@@ -16,7 +16,7 @@ export default function MainLayout() {
           headerLeft: () => (
             <Pressable
               onPress={() => router.push("/(settings)")}
-              style={{ marginLeft: 16 }}
+              style={{ marginLeft: 6 }}
             >
               <IconSymbol name="gearshape.fill" size={24} color="#007AFF" />
             </Pressable>
