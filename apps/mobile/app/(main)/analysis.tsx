@@ -18,7 +18,6 @@ import { NutriScoreBadge } from "@/components/ui/nutri-score-badge";
 import { ErrorState } from "@/components/ui/error-state";
 import { MessageBubble } from "@/components/analysis/message-bubble";
 import { TypingIndicator } from "@/components/analysis/typing-indicator";
-import { RecipeCard } from "@/components/analysis/recipe-card";
 
 export default function AnalysisScreen() {
   const router = useRouter();
@@ -118,17 +117,6 @@ export default function AnalysisScreen() {
     });
 
     abortAnalysisRef.current = abort;
-  };
-
-  const handleViewRecipe = () => {
-    if (analysis?.recipe) {
-      router.push({
-        pathname: "/(main)/recipe",
-        params: {
-          recipe: JSON.stringify(analysis.recipe),
-        },
-      });
-    }
   };
 
   if (loading) {
@@ -254,11 +242,6 @@ export default function AnalysisScreen() {
         {/* Analysis Error */}
         {analysisError && (
           <ErrorState error={analysisError} onRetry={startAnalysis} />
-        )}
-
-        {/* Recipe Card */}
-        {analysis?.recipe && !analyzing && (
-          <RecipeCard recipe={analysis.recipe} onPress={handleViewRecipe} />
         )}
 
         {/* Action Buttons */}
