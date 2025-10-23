@@ -1,6 +1,5 @@
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { Pressable } from "react-native";
-import { useRouter } from "expo-router";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 
 export default function MainLayout() {

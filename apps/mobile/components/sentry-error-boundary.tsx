@@ -26,7 +26,7 @@ interface SentryErrorBoundaryProps {
 
 export function SentryErrorBoundary({ children }: SentryErrorBoundaryProps) {
   return (
-    <Sentry.ErrorBoundary fallback={<ErrorFallback />} showDialog>
+    <Sentry.ErrorBoundary fallback={<ErrorFallback />}>
       {children}
     </Sentry.ErrorBoundary>
   );

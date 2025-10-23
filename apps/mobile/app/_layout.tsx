@@ -21,8 +21,9 @@ const navigationIntegration = Sentry.reactNavigationIntegration({
 Sentry.init({
   dsn: "https://fa3818be6142876a5b37540e8e55f3d7@o4506044970565632.ingest.us.sentry.io/4510222714077184",
 
-  enableUserInteractionTracing: true,
   tracesSampleRate: 1.0, // Capture 100% of transactions for development
+
+  enableUserInteractionTracing: true,
   enableNativeFramesTracking: true,
 
   sendDefaultPii: true,
@@ -31,8 +32,6 @@ Sentry.init({
 
   replaysSessionSampleRate: 1,
   replaysOnErrorSampleRate: 1,
-
-  profilesSampleRate: 1.0,
 
   integrations: [
     navigationIntegration,
@@ -69,7 +68,10 @@ export default Sentry.wrap(function RootLayout() {
             <Stack.Screen name="index" />
             <Stack.Screen name="(onboarding)" />
             <Stack.Screen name="(main)" />
-            <Stack.Screen name="(settings)" options={{ presentation: "modal" }} />
+            <Stack.Screen
+              name="(settings)"
+              options={{ presentation: "modal" }}
+            />
           </Stack>
           <StatusBar style="auto" />
         </ProfileProvider>
@@ -77,4 +79,3 @@ export default Sentry.wrap(function RootLayout() {
     </SentryErrorBoundary>
   );
 });
-
