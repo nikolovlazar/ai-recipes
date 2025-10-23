@@ -3,7 +3,6 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import { isRunningInExpoGo } from "expo";
 import { Stack, useNavigationContainerRef } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -13,9 +12,10 @@ import "../global.css";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { ProfileProvider } from "@/contexts/ProfileContext";
 import * as Sentry from "@sentry/react-native";
+import { SentryErrorBoundary } from "@/components/sentry-error-boundary";
 
 const navigationIntegration = Sentry.reactNavigationIntegration({
-  enableTimeToInitialDisplay: !isRunningInExpoGo,
+  enableTimeToInitialDisplay: true,
 });
 
 Sentry.init({
@@ -23,7 +23,7 @@ Sentry.init({
 
   enableUserInteractionTracing: true,
   tracesSampleRate: 1.0, // Capture 100% of transactions for development
-  enableNativeFramesTracking: !isRunningInExpoGo, // Track slow/frozen frames
+  enableNativeFramesTracking: true,
 
   sendDefaultPii: true,
 
@@ -62,17 +62,19 @@ export default Sentry.wrap(function RootLayout() {
   }, [ref]);
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <ProfileProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="(onboarding)" />
-          <Stack.Screen name="(main)" />
-          <Stack.Screen name="(settings)" options={{ presentation: "modal" }} />
-        </Stack>
-        <StatusBar style="auto" />
-      </ProfileProvider>
-    </ThemeProvider>
+    <SentryErrorBoundary>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <ProfileProvider>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="(onboarding)" />
+            <Stack.Screen name="(main)" />
+            <Stack.Screen name="(settings)" options={{ presentation: "modal" }} />
+          </Stack>
+          <StatusBar style="auto" />
+        </ProfileProvider>
+      </ThemeProvider>
+    </SentryErrorBoundary>
   );
 });
 

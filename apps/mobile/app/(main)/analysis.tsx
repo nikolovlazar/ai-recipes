@@ -9,9 +9,14 @@ import {
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useState, useEffect, useRef } from "react";
 import { Image } from "expo-image";
-import type { ProductDetails, AnalysisResponse } from "@ai-recipes/shared";
+import type {
+  ProductDetails,
+  AnalysisResponse,
+  ProfileResponse,
+} from "@ai-recipes/shared";
 import { getProduct } from "@/api/products";
 import { analyzeProduct } from "@/api/analysis";
+import { getProfile } from "@/api/profile";
 import { NutrientLevelsCard } from "@/components/products/nutrient-levels-card";
 import { NutrimentsCard } from "@/components/products/nutriments-card";
 import { NutriScoreBadge } from "@/components/ui/nutri-score-badge";
@@ -27,6 +32,7 @@ export default function AnalysisScreen() {
   const [product, setProduct] = useState<ProductDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [profile, setProfile] = useState<ProfileResponse | null>(null);
 
   // AI Analysis state
   const [analyzing, setAnalyzing] = useState(false);
@@ -34,6 +40,10 @@ export default function AnalysisScreen() {
   const [streamedContent, setStreamedContent] = useState("");
   const [analysis, setAnalysis] = useState<AnalysisResponse | null>(null);
   const abortAnalysisRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    loadUserProfile();
+  }, []);
 
   useEffect(() => {
     if (barcode) {
@@ -54,6 +64,15 @@ export default function AnalysisScreen() {
       }
     };
   }, []);
+
+  const loadUserProfile = async () => {
+    try {
+      const userProfile = await getProfile();
+      setProfile(userProfile);
+    } catch (err: any) {
+      console.log(`[Analysis] No profile found`);
+    }
+  };
 
   const loadProductDetails = async () => {
     console.log(`[Analysis] Loading product details for barcode: ${barcode}`);
@@ -213,6 +232,12 @@ export default function AnalysisScreen() {
         </View>
       )}
 
+      {/* Your Diet Section */}
+      <View style={styles.dietSection}>
+        <Text style={styles.dietLabel}>Your Diet</Text>
+        <Text style={styles.dietText}>{profile!.diet!.toUpperCase()}</Text>
+      </View>
+
       {/* Compact Nutrient Levels & Nutrition - Side by side */}
       <View style={styles.compactNutrition}>
         <View style={styles.compactColumn}>
@@ -336,6 +361,26 @@ const styles = StyleSheet.create({
   compactAllergenText: {
     fontSize: 13,
     color: "#856404",
+    fontWeight: "500",
+  },
+  dietSection: {
+    backgroundColor: "#e8f5e9",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#4caf50",
+  },
+  dietLabel: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#1b5e20",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    marginBottom: 4,
+  },
+  dietText: {
+    fontSize: 13,
+    color: "#1b5e20",
     fontWeight: "500",
   },
   compactNutrition: {

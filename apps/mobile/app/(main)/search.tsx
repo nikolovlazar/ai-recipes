@@ -14,7 +14,6 @@ import { searchProducts } from "@/api/products";
 import { ProductCard } from "@/components/products/product-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
-import { SentryErrorBoundary } from "@/components/sentry-error-boundary";
 
 function SearchScreenContent() {
   const router = useRouter();
@@ -46,7 +45,7 @@ function SearchScreenContent() {
       const response = await searchProducts(searchQuery.trim(), pageNum);
 
       console.log(
-        `[Search] Found ${response.products.length} products (${response.count} total)`
+        `[Search] Found ${response.products.length} products (${response.count} total)`,
       );
 
       if (pageNum === 1) {
@@ -59,7 +58,10 @@ function SearchScreenContent() {
       setPage(pageNum);
       setHasMore(response.products.length > 0);
     } catch (err: any) {
-      console.error(`[Search] Search failed for "${searchQuery}":`, err.message);
+      console.error(
+        `[Search] Search failed for "${searchQuery}":`,
+        err.message,
+      );
 
       if (err.status === 0) {
         setError("Check your internet connection");
@@ -282,9 +284,5 @@ const styles = StyleSheet.create({
 });
 
 export default function SearchScreen() {
-  return (
-    <SentryErrorBoundary>
-      <SearchScreenContent />
-    </SentryErrorBoundary>
-  );
+  return <SearchScreenContent />;
 }

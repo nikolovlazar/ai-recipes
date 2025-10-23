@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import * as Sentry from "@sentry/react-native";
 
 interface ErrorFallbackProps {
@@ -7,40 +7,26 @@ interface ErrorFallbackProps {
   resetError: () => void;
 }
 
-function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
+function ErrorFallback() {
   return (
     <View style={styles.container}>
       <Text style={styles.emoji}>😵</Text>
       <Text style={styles.title}>Oops! Something went wrong</Text>
       <Text style={styles.message}>
-        We've been notified and are working on a fix.
+        We&apos;ve been notified and are working on a fix.
       </Text>
-
-      {__DEV__ && (
-        <View style={styles.errorDetails}>
-          <Text style={styles.errorTitle}>Error Details (Dev Only):</Text>
-          <Text style={styles.errorText}>{error.message}</Text>
-        </View>
-      )}
-
-      <Pressable style={styles.button} onPress={resetError}>
-        <Text style={styles.buttonText}>Try Again</Text>
-      </Pressable>
     </View>
   );
 }
 
 interface SentryErrorBoundaryProps {
   children: React.ReactNode;
-  fallback?: React.ComponentType<ErrorFallbackProps>;
+  fallback?: React.ElementType<ErrorFallbackProps>;
 }
 
-export function SentryErrorBoundary({
-  children,
-  fallback,
-}: SentryErrorBoundaryProps) {
+export function SentryErrorBoundary({ children }: SentryErrorBoundaryProps) {
   return (
-    <Sentry.ErrorBoundary fallback={fallback || ErrorFallback} showDialog>
+    <Sentry.ErrorBoundary fallback={<ErrorFallback />} showDialog>
       {children}
     </Sentry.ErrorBoundary>
   );
