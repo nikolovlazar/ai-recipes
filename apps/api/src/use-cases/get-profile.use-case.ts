@@ -21,7 +21,7 @@ export async function getProfileUseCase(
   return await Sentry.startSpan(
     {
       op: "function",
-      name: "Get User Profile",
+      name: "GetProfileUseCase: Get User Profile",
     },
     async () => {
       return await profileRepository.findProfile();

@@ -23,7 +23,7 @@ export async function deleteProfileUseCase(
   await Sentry.startSpan(
     {
       op: "function",
-      name: "Delete User Profile",
+      name: "DeleteProfileUseCase: Delete User Profile",
     },
     async () => {
       const existingProfile = await profileRepository.findProfile();

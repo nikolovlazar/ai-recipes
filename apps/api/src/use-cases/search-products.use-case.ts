@@ -32,7 +32,7 @@ export async function searchProductsUseCase(
   return await Sentry.startSpan(
     {
       op: "function",
-      name: "Search Products",
+      name: "SearchProductsUseCase: Search Products",
       attributes: {
         "search.query": dto.query?.trim(),
         "search.page": dto.page || 1,

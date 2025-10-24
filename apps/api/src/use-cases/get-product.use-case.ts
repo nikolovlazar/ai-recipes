@@ -28,7 +28,7 @@ export async function getProductUseCase(
   return await Sentry.startSpan(
     {
       op: "function",
-      name: "Get Product Details",
+      name: "GetProductUseCase: Get Product Details",
       attributes: {
         "product.barcode": barcode?.trim(),
       },

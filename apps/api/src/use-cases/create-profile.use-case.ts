@@ -28,7 +28,7 @@ export async function createProfileUseCase(
   return await Sentry.startSpan(
     {
       op: "function",
-      name: "Create User Profile",
+      name: "CreateProfileUseCase: Create User Profile",
       attributes: {
         "profile.has_diet": !!data.diet,
         "profile.allergies_count": data.allergies?.length || 0,

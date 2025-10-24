@@ -32,7 +32,7 @@ export async function gatherAnalysisContextUseCase(
   return await Sentry.startSpan(
     {
       op: "function",
-      name: "Gather Analysis Context",
+      name: "GatherAnalysisContextUseCase: Gather Analysis Context",
       attributes: {
         "product.barcode": barcode,
       },

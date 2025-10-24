@@ -39,7 +39,7 @@ export class ProductsRepository implements IProductsRepository {
   ): Promise<SearchProductsResponse> {
     return await Sentry.startSpan(
       {
-        name: "Search products by query",
+        name: "ProductsRepository: Search products by query",
         op: "http.client",
         attributes: {
           "search.query": dto.query,
@@ -52,7 +52,7 @@ export class ProductsRepository implements IProductsRepository {
             q: dto.query,
             langs: ["en"],
             page: dto.page || 1,
-            page_size: 20,
+            page_size: 400,
             // Note: SearchAPI may not support fields parameter
             // It returns a predefined set of fields
           });
@@ -168,7 +168,7 @@ export class ProductsRepository implements IProductsRepository {
   private async fetchFromAPI(barcode: string): Promise<ProductDetails | null> {
     return await Sentry.startSpan(
       {
-        name: "Fetch product from Open Food Facts API",
+        name: "ProductsRepository: Fetch product from Open Food Facts API",
         op: "http.client",
         attributes: {
           "product.barcode": barcode,

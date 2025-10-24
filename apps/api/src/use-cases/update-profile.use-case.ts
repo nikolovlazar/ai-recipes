@@ -28,7 +28,7 @@ export async function updateProfileUseCase(
   return await Sentry.startSpan(
     {
       op: "function",
-      name: "Update User Profile",
+      name: "UpdateProfileUseCase: Update User Profile",
       attributes: {
         "profile.has_diet": !!data.diet,
         "profile.allergies_count": data.allergies?.length || 0,

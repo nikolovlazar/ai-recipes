@@ -31,7 +31,7 @@ export async function analyzeProductUseCase(
   return await Sentry.startSpan(
     {
       op: "function",
-      name: "Analyze Product with AI",
+      name: "AnalyzeProductUseCase: Analyze Product with AI",
       attributes: {
         "product.barcode": context.product.barcode,
         "profile.has_allergies": !!context.profile.allergies?.length,
