@@ -36,9 +36,9 @@ Sentry.init({
   integrations: [
     navigationIntegration,
     Sentry.mobileReplayIntegration({
-      maskAllText: true,
-      maskAllImages: true,
-      maskAllVectors: true,
+      maskAllText: false,
+      maskAllImages: false,
+      maskAllVectors: false,
     }),
     Sentry.feedbackIntegration(),
     Sentry.consoleLoggingIntegration({ levels: ["log", "warn", "error"] }),
