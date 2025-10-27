@@ -123,7 +123,7 @@ export default function EditProfileScreen() {
     } catch (err: any) {
       Alert.alert(
         "Error",
-        err.message || "Failed to update profile. Please try again."
+        err.message || "Failed to update profile. Please try again.",
       );
     } finally {
       setSaving(false);
@@ -148,7 +148,7 @@ export default function EditProfileScreen() {
             }
           },
         },
-      ]
+      ],
     );
   };
 
@@ -169,9 +169,14 @@ export default function EditProfileScreen() {
           <View style={styles.pickerContainer}>
             <Picker
               selectedValue={formData.diet || "None"}
-              onValueChange={(value) =>
-                setFormData({ ...formData, diet: value === "None" ? undefined : value })
-              }
+              onValueChange={(value) => {
+                console.log(`Changing diet from ${formData.diet} to ${value}`);
+
+                setFormData({
+                  ...formData,
+                  diet: value === "None" ? undefined : value,
+                });
+              }}
               style={styles.picker}
             >
               {DIET_OPTIONS.map((option) => (
