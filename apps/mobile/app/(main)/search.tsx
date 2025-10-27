@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react-native";
 import {
   View,
   Text,
@@ -25,9 +26,22 @@ function SearchScreenContent() {
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [initialized, setInitialized] = useState(false);
 
   // Debounced search
   const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
+
+  useEffect(() => {
+    const init = async () => {
+      setQuery("Nutella");
+      await handleSearch("Nutella");
+      setInitialized(true);
+    };
+
+    if (!initialized) {
+      init();
+    }
+  }, [initialized, setInitialized]);
 
   const handleSearch = async (searchQuery: string, pageNum: number = 1) => {
     if (searchQuery.trim().length < 2) {
@@ -38,45 +52,74 @@ function SearchScreenContent() {
 
     console.log(`[Search] Searching for "${searchQuery}" (page ${pageNum})`);
 
-    try {
-      setLoading(true);
-      setError(null);
+    // INFO: Start a product search span to measure search
+    await Sentry.startSpan(
+      {
+        name: "search-products",
+        op: "function",
+        // INFO: Add attributes to help debug later
+        attributes: {
+          ["attr.query"]: searchQuery,
+          ["attr.page"]: pageNum,
+        },
+      },
+      async (span) => {
+        try {
+          setLoading(true);
+          setError(null);
 
-      const response = await searchProducts(searchQuery.trim(), pageNum);
+          const response = await searchProducts(searchQuery.trim(), pageNum);
 
-      console.log(
-        `[Search] Found ${response.products.length} products (${response.count} total)`,
-      );
+          console.log(
+            `[Search] Found ${response.products.length} products (${response.count} total)`,
+          );
 
-      if (pageNum === 1) {
-        setProducts(response.products);
-      } else {
-        setProducts((prev) => [...prev, ...response.products]);
-      }
+          if (pageNum === 1) {
+            setProducts(response.products);
+          } else {
+            setProducts((prev) => [...prev, ...response.products]);
+          }
 
-      setTotalCount(response.count);
-      setPage(pageNum);
-      setHasMore(response.products.length > 0);
-    } catch (err: any) {
-      console.error(
-        `[Search] Search failed for "${searchQuery}":`,
-        err.message,
-      );
+          // INFO: Add more attributes once we have results
+          span.setAttributes({
+            ["attr.totalCount"]: response.count,
+            ["attr.hasMore"]: response.products.length > 0,
+          });
 
-      if (err.status === 0) {
-        setError("Check your internet connection");
-      } else if (err.status >= 500) {
-        setError("Server error. Try again later.");
-      } else {
-        setError(err.message || "Failed to search products");
-      }
+          setTotalCount(response.count);
+          setPage(pageNum);
+          setHasMore(response.products.length > 0);
+        } catch (err: any) {
+          // INFO: Make sure to capture the exception
+          Sentry.captureException(err);
 
-      if (pageNum === 1) {
-        setProducts([]);
-      }
-    } finally {
-      setLoading(false);
-    }
+          console.error(
+            `[Search] Search failed for "${searchQuery}":`,
+            err.message,
+          );
+
+          if (err.status === 0) {
+            setError("Check your internet connection");
+          } else if (err.status >= 500) {
+            setError("Server error. Try again later.");
+          } else {
+            setError(err.message || "Failed to search products");
+          }
+
+          // INFO: Set the span's status to ERROR (code: 2) and pass the message through
+          span.setStatus({
+            code: 2,
+            message: err.message || "Failed to search products",
+          });
+
+          if (pageNum === 1) {
+            setProducts([]);
+          }
+        } finally {
+          setLoading(false);
+        }
+      },
+    );
   };
 
   const handleQueryChange = (text: string) => {
@@ -152,6 +195,8 @@ function SearchScreenContent() {
 
   return (
     <View style={styles.container}>
+      {/* INFO: Record Time to Full Display */}
+      <Sentry.TimeToFullDisplay record={initialized} />
       {/* Search Input */}
       <View style={styles.searchContainer}>
         <View style={styles.searchInputContainer}>
