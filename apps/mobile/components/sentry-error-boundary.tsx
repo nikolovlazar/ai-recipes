@@ -58,35 +58,4 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     lineHeight: 24,
   },
-  errorDetails: {
-    backgroundColor: "#f5f5f5",
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 24,
-    width: "100%",
-  },
-  errorTitle: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#666",
-    marginBottom: 8,
-  },
-  errorText: {
-    fontSize: 12,
-    color: "#ff3b30",
-    fontFamily: "monospace",
-  },
-  button: {
-    backgroundColor: "#007AFF",
-    paddingVertical: 14,
-    paddingHorizontal: 32,
-    borderRadius: 8,
-    minWidth: 200,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-    textAlign: "center",
-  },
 });
