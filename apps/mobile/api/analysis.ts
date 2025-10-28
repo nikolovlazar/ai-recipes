@@ -16,7 +16,7 @@ interface AnalysisCallbacks {
  */
 export function analyzeProduct(
   barcode: string,
-  callbacks: AnalysisCallbacks
+  callbacks: AnalysisCallbacks,
 ): () => void {
   const url = `${API_CONFIG.baseURL}/products/${barcode}/analyze`;
   const xhr = new XMLHttpRequest();
@@ -65,11 +65,7 @@ export function analyzeProduct(
   };
 
   xhr.open("GET", url, true);
-
-  // Set headers
-  Object.entries(API_CONFIG.headers).forEach(([key, value]) => {
-    xhr.setRequestHeader(key, value);
-  });
+  xhr.setRequestHeader("Accept", "text/event-stream");
 
   xhr.onreadystatechange = () => {
     if (xhr.readyState === 3 || xhr.readyState === 4) {

@@ -1,38 +1,40 @@
-import { apiClient } from "./client";
+import { API_CONFIG } from "./config";
 import type { ProfileDto, ProfileResponse } from "@ai-recipes/shared";
 
-/**
- * Get the current user profile
- * @throws HttpError if profile not found (404)
- */
 export async function getProfile(): Promise<ProfileResponse> {
-  return apiClient.get<ProfileResponse>("/profile");
+  const response = await fetch(`${API_CONFIG.baseURL}/profile`);
+  if (response.status === 404) throw new Error("Profile does not exist");
+  if (!response.ok) throw new Error("Failed to get profile");
+  return response.json();
 }
 
-/**
- * Create a new user profile
- * @throws HttpError if profile already exists (409)
- */
 export async function createProfile(
-  data: ProfileDto
+  data: ProfileDto,
 ): Promise<ProfileResponse> {
-  return apiClient.post<ProfileResponse>("/profile", data);
+  const response = await fetch(`${API_CONFIG.baseURL}/profile`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error("Failed to create profile");
+  return response.json();
 }
 
-/**
- * Update existing user profile
- * @throws HttpError if profile not found (404)
- */
 export async function updateProfile(
-  data: Partial<ProfileDto>
+  data: Partial<ProfileDto>,
 ): Promise<ProfileResponse> {
-  return apiClient.put<ProfileResponse>("/profile", data);
+  const response = await fetch(`${API_CONFIG.baseURL}/profile`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error("Failed to update profile");
+  return response.json();
 }
 
-/**
- * Delete user profile
- * @throws HttpError if profile not found (404)
- */
 export async function deleteProfile(): Promise<void> {
-  await apiClient.delete<void>("/profile");
+  const response = await fetch(`${API_CONFIG.baseURL}/profile`, {
+    method: "DELETE",
+  });
+  if (!response.ok) throw new Error("Failed to delete profile");
 }

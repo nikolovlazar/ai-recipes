@@ -1,4 +1,4 @@
-import { View, StyleSheet, ScrollView, Alert } from "react-native";
+import { StyleSheet, ScrollView, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { ProfileSummaryCard } from "@/components/settings/profile-summary-card";
 import { SettingsSection } from "@/components/settings/settings-section";
@@ -27,7 +27,7 @@ export default function SettingsScreen() {
             }
           },
         },
-      ]
+      ],
     );
   };
 
