@@ -40,7 +40,6 @@ Sentry.init({
       maskAllImages: false,
       maskAllVectors: false,
     }),
-    Sentry.feedbackIntegration(),
     Sentry.consoleLoggingIntegration({ levels: ["log", "warn", "error"] }),
   ],
 
