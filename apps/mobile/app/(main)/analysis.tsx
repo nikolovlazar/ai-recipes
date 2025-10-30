@@ -233,10 +233,12 @@ export default function AnalysisScreen() {
       )}
 
       {/* Your Diet Section */}
-      <View style={styles.dietSection}>
-        <Text style={styles.dietLabel}>Your Diet</Text>
-        <Text style={styles.dietText}>{profile!.diet!.toUpperCase()}</Text>
-      </View>
+      {profile?.diet && (
+        <View style={styles.dietSection}>
+          <Text style={styles.dietLabel}>Your Diet</Text>
+          <Text style={styles.dietText}>{profile.diet.toUpperCase()}</Text>
+        </View>
+      )}
 
       {/* Compact Nutrient Levels & Nutrition - Side by side */}
       <View style={styles.compactNutrition}>

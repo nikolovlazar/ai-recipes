@@ -133,14 +133,14 @@ export class ProfileRepository implements IProfileRepository {
   ): ProfileResponse {
     return {
       id: profile.id,
-      diet: profile.diet ?? undefined,
+      diet: profile.diet !== null ? profile.diet : undefined,
       allergies: profile.allergies ? JSON.parse(profile.allergies) : undefined,
       restrictions: profile.restrictions
         ? JSON.parse(profile.restrictions)
         : undefined,
-      age: profile.age ?? undefined,
-      weight: profile.weight ?? undefined,
-      goals: profile.goals ?? undefined,
+      age: profile.age !== null ? profile.age : undefined,
+      weight: profile.weight !== null ? profile.weight : undefined,
+      goals: profile.goals !== null ? profile.goals : undefined,
       createdAt: profile.createdAt,
       updatedAt: profile.updatedAt,
     };
